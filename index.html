@@ -35,38 +35,32 @@
         /* Z-Index 2: Dynamic Tools & Fluids */
         #layer-aqua { background-image: url('mbaqua11.png'); z-index: 2; }
         
-        /* FIX 2: Posisi pancaran air disesuaikan dengan moncong botol di gambar */
+        /* Perbaikan Posisi Pancaran Air */
         #water-stream {
-            position: absolute; left: 43.5%; top: 23%; width: 0.6%; height: 0%;
+            position: absolute; left: 45.3%; top: 22.5%; width: 0.6%; height: 0%;
             background-color: rgba(180, 230, 255, 0.6); z-index: 2; transition: height 0.1s ease;
         }
 
-        /* Animasi Tuang Zat (Serbuk Jatuh) */
-        #powder-stream {
-            position: absolute; left: 52%; top: 15%; width: 2%; height: 0%;
-            background-color: #ecf0f1; border-radius: 5px; z-index: 2; transition: height 0.3s ease, top 0.3s ease; display: none;
-        }
-
-        /* FIX 1: Beaker Fluids sekarang punya lengkungan (border-radius) agar tidak jebol */
+        /* Perbaikan Lengkungan Bawah Gelas */
         #beaker-fluid-container {
             position: absolute; left: 37.5%; top: 33.33%; width: 31.25%; height: 55.55%;
             z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; overflow: hidden;
-            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 4cqw; border-bottom-right-radius: 4cqw;
         }
         #layer-liquid {
             width: 100%; height: 0%; background-color: rgba(180, 230, 255, 0.25);
-            transition: height 0.2s ease, background-color 0.5s ease;
+            transition: height 0.1s ease, background-color 0.5s ease;
         }
         #layer-precipitate {
             width: 100%; height: 0%; background-color: transparent;
             transition: height 0.4s ease, background-color 0.3s ease;
         }
         
-        /* FIX 4: Batang Pengaduk selalu nampak dari awal (Z-Index 2) */
+        /* Batang Pengaduk (Selalu Ada) & Tangan */
         #layer-stir { background-image: url('mbgstir.png'); z-index: 2; display: block; }
         #layer-hand-pour { background-image: url('mbgstir1.png'); z-index: 2; display: none; }
 
-        /* Z-Index 3: Kaca Gelas (Menimpa Cairan dan Pengaduk) */
+        /* Z-Index 3: Kaca Gelas */
         #layer-glass { background-image: url('mbglass.png'); z-index: 3; pointer-events: none; }
 
         /* Z-Index 4 & 5: Antarmuka Key */
@@ -123,9 +117,11 @@
         #ui-sprite-2 { left: 37.5%; top: 88.88%; }
         #ui-text-2 { left: 43.75%; top: 88.88%; }
         
-        /* FIX 5: Tulisan Air dipindah ke m9-n9 (75% - 81.25%) */
-        #ui-sprite-air { left: 75%; top: 88.88%; background-image: url('mbparthoh.png'); }
-        #ui-text-air { left: 81.25%; top: 88.88%; width: 12.5%; display: flex; align-items: center; justify-content: flex-start; color: white; font-size: 3cqw; z-index: 21; text-shadow: 1px 1px 0 #000;}
+        /* Tulisan Air dipindah presisi ke m9-n9 tanpa sprite */
+        #ui-text-air { 
+            position: absolute; left: 75%; top: 88.88%; width: 12.5%; height: 11.11%;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 3cqw; z-index: 21; text-shadow: 1px 1px 0 #000;
+        }
 
         #particle-canvas {
             position: absolute; left: 12.5%; top: 22.22%; width: 75%; height: 55.55%; z-index: 21; overflow: hidden;
@@ -146,7 +142,6 @@
     </div>
     
     <div id="water-stream"></div>
-    <div id="powder-stream"></div>
     <div id="layer-stir" class="layer"></div>
     <div id="layer-hand-pour" class="layer"></div>
     <div id="layer-aqua" class="layer"></div>
@@ -163,9 +158,7 @@
     <button id="btn-add-substance" class="btn-grid" style="left: 6.25%; top: 55.55%; width: 18.75%; height: 11.11%; display: none;" onclick="eksekusiTambahZat()"></button>
 
     <button class="btn-grid" style="left: 6.25%; top: 77.77%; width: 18.75%; height: 11.11%;" onclick="resetSimulasi()"></button>
-    
     <button class="btn-grid" style="left: 75%; top: 33.33%; width: 18.75%; height: 11.11%;" onclick="bukaSolubility()"></button>
-    
     <button class="btn-grid" style="left: 75%; top: 77.77%; width: 18.75%; height: 11.11%;" onclick="bukaMolaritas()"></button>
 
     <div id="popup-molarity" class="layer popup-layer">
@@ -183,7 +176,7 @@
         <div id="ui-text-1" class="part-text">Na+</div>
         <div id="ui-sprite-2" class="part-sprite"></div>
         <div id="ui-text-2" class="part-text">Cl-</div>
-        <div id="ui-sprite-air" class="part-sprite"></div>
+        
         <div id="ui-text-air">Air</div>
 
         <div id="particle-canvas"></div>
@@ -199,7 +192,6 @@
     let tuangAirInterval = null;
     const MOL_TETAP = 1.0; 
 
-    // DOM Refs
     const elAlert = document.getElementById('alert-msg');
     const elAqua = document.getElementById('layer-aqua');
     const elWaterStream = document.getElementById('water-stream');
@@ -208,7 +200,6 @@
     const elKeyAdd = document.getElementById('layer-key-add');
     const btnAddSubstance = document.getElementById('btn-add-substance');
     const elHandPour = document.getElementById('layer-hand-pour');
-    const elPowder = document.getElementById('powder-stream');
     const elPrecipitate = document.getElementById('layer-precipitate');
     const elStir = document.getElementById('layer-stir');
     const popMolarity = document.getElementById('popup-molarity');
@@ -221,9 +212,9 @@
     }
 
     function updateVisualBotolMiring() {
-        if (volumeAir_mL < 500) {
+        if (volumeAir_mL <= 500) {
             elAqua.style.backgroundImage = "url('mbaqua11x.png')";
-        } else if (volumeAir_mL >= 500 && volumeAir_mL < 1000) {
+        } else if (volumeAir_mL > 500 && volumeAir_mL <= 1000) {
             elAqua.style.backgroundImage = "url('mbaqua01x.png')";
         }
     }
@@ -231,8 +222,10 @@
     function updateVisualBotolDiam() {
         if (volumeAir_mL === 0) {
             elAqua.style.backgroundImage = "url('mbaqua11.png')";
-        } else if (volumeAir_mL > 0 && volumeAir_mL <= 500) {
-            elAqua.style.backgroundImage = "url('mbaqua01.png')"; // Di 500 botol 1 habis
+        } else if (volumeAir_mL > 0 && volumeAir_mL < 500) {
+            elAqua.style.backgroundImage = "url('mbaqua11.png')";
+        } else if (volumeAir_mL === 500) {
+            elAqua.style.backgroundImage = "url('mbaqua01.png')"; 
         } else if (volumeAir_mL > 500 && volumeAir_mL < 1000) {
             elAqua.style.backgroundImage = "url('mbaqua01.png')"; 
         } else if (volumeAir_mL >= 1000) {
@@ -240,14 +233,14 @@
         }
     }
 
-    // --- FIX 3: ANIMASI MENUANG AIR PER 100mL ---
+    // --- ANIMASI MENUANG AIR PER 100mL ---
     function prosesTuang100mL() {
         if (volumeAir_mL >= 1000) {
             hentiTuangAir();
             return;
         }
         
-        volumeAir_mL += 100; // Penambahan pas 100ml / 0,1 L
+        volumeAir_mL += 100;
         updateVisualBotolMiring();
 
         let persenTinggi = (volumeAir_mL / 1000) * 100;
@@ -264,15 +257,14 @@
 
     function mulaiTuangAir() {
         if (sistemSedangAnimasi || volumeAir_mL >= 1000) return;
-        elWaterStream.style.height = '35%'; // Memanjang ke gelas
+        elWaterStream.style.height = '33%'; 
         
-        // Panggil langsung sekali saat diklik
-        prosesTuang100mL();
+        prosesTuang100mL(); // Tuang instan pertama
         
-        // Looping jika ditahan (Jeda agak lambat agar murid melihat per-100ml)
+        // Terus tuang per 100ml selama ditahan
         tuangAirInterval = setInterval(() => {
             prosesTuang100mL();
-        }, 400); 
+        }, 350); 
     }
 
     function hentiTuangAir() {
@@ -281,7 +273,7 @@
         updateVisualBotolDiam();
     }
 
-    // --- FIX 4: LOGIKA MENUANG ZAT & PENGADUKAN ---
+    // --- LOGIKA MENUANG ZAT & PENGADUKAN ---
     function eksekusiTambahZat() {
         if (sistemSedangAnimasi || zatTelahDituang) return;
         sistemSedangAnimasi = true;
@@ -291,40 +283,26 @@
 
         // Munculkan Tangan penuang serbuk selama 2 detik
         elHandPour.style.display = 'block';
-        elPowder.style.display = 'block';
-        elPowder.style.height = '25%'; 
         
-        setTimeout(() => {
-            elPowder.style.display = 'none';
-            elPowder.style.height = '0%';
-            elPrecipitate.style.height = '12%'; 
-            elPrecipitate.style.backgroundColor = '#ecf0f1';
-        }, 1000);
+        // Endapan langsung muncul
+        elPrecipitate.style.height = '12%'; 
+        elPrecipitate.style.backgroundColor = '#ecf0f1';
 
         setTimeout(() => {
             elHandPour.style.display = 'none';
-            // Lanjut animasi rotasi batang kaca yang sudah ada
-            animasiPengadukan();
-        }, 2000);
-    }
+            // Panggil GIF Pengadukan
+            elStir.style.backgroundImage = "url('mbgstirx.gif')";
 
-    function animasiPengadukan() {
-        let stirCount = 0;
-        let stirInterval = setInterval(() => {
-            // Efek bergetar/berputar untuk simulasi pengadukan
-            elStir.style.transform = stirCount % 2 === 0 ? 'translateX(3px) rotate(3deg)' : 'translateX(-3px) rotate(-3deg)';
-            stirCount++;
-            if (stirCount > 15) { // Berlangsung 2 detikan
-                clearInterval(stirInterval);
-                elStir.style.transform = 'none'; // Kembali diam (mbgstir.png)
-                
+            setTimeout(() => {
+                // Selesai diaduk
+                elStir.style.backgroundImage = "url('mbgstir.png')";
                 zatTelahDituang = true;
                 larutanTelahDiaduk = true;
                 elPrecipitate.style.height = '0%';
                 elLiquid.style.backgroundColor = 'rgba(230, 245, 255, 0.5)'; 
                 sistemSedangAnimasi = false;
-            }
-        }, 150);
+            }, 2000);
+        }, 2000);
     }
 
     function resetSimulasi() {
@@ -418,9 +396,9 @@
         constructor(type, x, y, size, sprite, charge) {
             this.type = type; 
             this.x = x; this.y = y;
-            // FIX 5: Pergerakan di perlambat
-            this.vx = (Math.random() - 0.5) * 0.7; 
-            this.vy = (Math.random() - 0.5) * 0.7;
+            // Kecepatan diperlambat agar tumbukan terlihat jelas
+            this.vx = (Math.random() - 0.5) * 0.8; 
+            this.vy = (Math.random() - 0.5) * 0.8;
             this.size = size; this.charge = charge; 
             this.angle = Math.random() * 360; 
             
@@ -435,18 +413,22 @@
         update(canvasWidth, canvasHeight) {
             this.x += this.vx; this.y += this.vy;
 
-            if (this.x <= 0 || this.x + this.size >= canvasWidth) this.vx *= -1;
-            if (this.y <= 0 || this.y + this.size >= canvasHeight) this.vy *= -1;
+            // Pantul dinding
+            if (this.x <= 0) { this.x = 0; this.vx *= -1; }
+            if (this.x + this.size >= canvasWidth) { this.x = canvasWidth - this.size; this.vx *= -1; }
+            if (this.y <= 0) { this.y = 0; this.vy *= -1; }
+            if (this.y + this.size >= canvasHeight) { this.y = canvasHeight - this.size; this.vy *= -1; }
 
+            // Logika Kutub Air ke Ion
             if (this.type === 'water') {
                 let ionTerdekat = null;
                 let jarakTerdekat = 99999;
 
                 for (let p of particles) {
                     if (p.type === 'ion1' || p.type === 'ion2') {
-                        let dx = p.x - this.x; let dy = p.y - this.y;
+                        let dx = (p.x + p.size/2) - (this.x + this.size/2); 
+                        let dy = (p.y + p.size/2) - (this.y + this.size/2);
                         let dist = Math.sqrt(dx*dx + dy*dy);
-                        // Jarak sensor air untuk mengerubungi ion (120px)
                         if (dist < 120 && dist < jarakTerdekat) { 
                             jarakTerdekat = dist; ionTerdekat = p;
                         }
@@ -454,28 +436,20 @@
                 }
 
                 if (ionTerdekat) {
-                    let targetRad = Math.atan2(ionTerdekat.y - this.y, ionTerdekat.x - this.x);
+                    let targetRad = Math.atan2((ionTerdekat.y + ionTerdekat.size/2) - (this.y + this.size/2), (ionTerdekat.x + ionTerdekat.size/2) - (this.x + this.size/2));
                     let targetDeg = targetRad * (180 / Math.PI);
                     
-                    // Arahkan kutub air ke ion (Orientasi rotasi sprite)
                     if (ionTerdekat.charge === 1) this.angle = targetDeg + 90; 
                     else if (ionTerdekat.charge === -1) this.angle = targetDeg - 90;
 
-                    // FIX 5: Logika pengerubungan (Mendekat jika jauh, stabil jika dekat)
-                    if (jarakTerdekat > 35) {
-                        this.vx += Math.cos(targetRad) * 0.05;
-                        this.vy += Math.sin(targetRad) * 0.05;
-                    } else {
-                        this.vx -= Math.cos(targetRad) * 0.05;
-                        this.vy -= Math.sin(targetRad) * 0.05;
+                    if (jarakTerdekat > 40) {
+                        this.vx += Math.cos(targetRad) * 0.03;
+                        this.vy += Math.sin(targetRad) * 0.03;
                     }
-                    
-                    // Damping agar molekul air tidak melesat kencang saat mengitari ion
-                    this.vx *= 0.9;
-                    this.vy *= 0.9;
-
+                    // Limit max speed
+                    this.vx *= 0.98; this.vy *= 0.98;
                 } else {
-                    this.angle += 0.5; // Berputar santai jika tidak ada ion
+                    this.angle += 0.5;
                 }
             }
             this.element.style.left = this.x + 'px';
@@ -491,11 +465,13 @@
 
         let volLiters = volumeAir_mL / 1000;
         let molaritas = isLarut ? (MOL_TETAP / volLiters) : 0;
-        let baseWaterCount = 25; 
+        
+        // Tambahan partikel air agar lebih ramai
+        let baseWaterCount = 45; 
         let ionPairs = isLarut ? Math.min(Math.round(molaritas * 5), 25) : 0;
 
         for (let i = 0; i < baseWaterCount; i++) {
-            particles.push(new Partikel('water', Math.random() * (cWidth - 30), Math.random() * (cHeight - 30), 35, 'mbparthoh.png', 0));
+            particles.push(new Partikel('water', Math.random() * (cWidth - 30), Math.random() * (cHeight - 30), 30, 'mbparthoh.png', 0));
         }
 
         if (isLarut && ionPairs > 0) {
@@ -526,6 +502,38 @@
 
     function loopPartikel() {
         let cWidth = pCanvas.clientWidth; let cHeight = pCanvas.clientHeight;
+        
+        // Logika Tumbukan (Collision) antar partikel
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                let p1 = particles[i];
+                let p2 = particles[j];
+                
+                // Lewati jika keduanya benda padat kaku (Lattice)
+                if (p1.type === 'solid' && p2.type === 'solid') continue;
+
+                let dx = (p1.x + p1.size/2) - (p2.x + p2.size/2);
+                let dy = (p1.y + p1.size/2) - (p2.y + p2.size/2);
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                let minDist = (p1.size + p2.size) / 2;
+
+                if (dist < minDist && dist > 0) {
+                    let overlap = minDist - dist;
+                    let nx = dx / dist;
+                    let ny = dy / dist;
+
+                    // Pisahkan posisi agar tidak menempel masuk (Separation)
+                    if (p1.type !== 'solid') { p1.x += nx * (overlap / 2); p1.y += ny * (overlap / 2); }
+                    if (p2.type !== 'solid') { p2.x -= nx * (overlap / 2); p2.y -= ny * (overlap / 2); }
+
+                    // Tukar Kecepatan (Elastic Collision sederhana)
+                    let tempVx = p1.vx; let tempVy = p1.vy;
+                    p1.vx = p2.vx; p1.vy = p2.vy;
+                    p2.vx = tempVx; p2.vy = tempVy;
+                }
+            }
+        }
+
         for (let p of particles) { p.update(cWidth, cHeight); }
         animFrameId = requestAnimationFrame(loopPartikel);
     }
